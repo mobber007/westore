@@ -1,5 +1,6 @@
 const path = require('path')
 const mix = require('laravel-mix')
+let SWPrecacheWebpackPlugin = require('sw-precache-webpack-plugin')
 // const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer')
 
 mix.config.vue.esModule = true
@@ -35,7 +36,24 @@ if (mix.inProduction()) {
 
 mix.webpackConfig({
   plugins: [
-    // new BundleAnalyzerPlugin()
+    new SWPrecacheWebpackPlugin({
+        cacheId: 'pwa',
+        filename: 'service-worker.js',
+        staticFileGlobs: ['public/**/*.{css,eot,svg,ttf,woff,woff2,js,html}'],
+        minify: true,
+        stripPrefix: 'public/',
+        handleFetch: true,
+        dynamicUrlToDependencies: {
+            '/': ['resources/views/index.blade.php']
+        },
+        staticFileGlobsIgnorePatterns: [/\.map$/, /mix-manifest\.json$/, /manifest\.json$/, /service-worker\.js$/],
+        runtimeCaching: [
+            {
+                urlPattern: /^https:\/\/fonts\.googleapis\.com\//,
+                handler: 'cacheFirst'
+            }
+        ]
+    })
   ],
   resolve: {
     extensions: ['.js', '.json', '.vue'],
@@ -43,6 +61,7 @@ mix.webpackConfig({
       '~': path.join(__dirname, './resources/assets/js')
     }
   },
+
   output: {
     chunkFilename: 'js/[name].[chunkhash].js',
     publicPath: mix.config.hmr ? '//localhost:8080' : '/'

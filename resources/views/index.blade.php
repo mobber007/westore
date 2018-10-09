@@ -29,6 +29,7 @@ $polyfills = [
   <link rel="icon" href="/storage/favicon.ico" type="image/x-icon">
 
   <link rel="stylesheet" href="{{ mix('css/app.css') }}">
+  <link rel="manifest" href="/manifest.json">
 </head>
 <body>
   <div id="app"></div>
